@@ -21,7 +21,7 @@
     "implementation": "candidate",
     "critique_round": "completed_with_four_findings",
     "improvements_round": "completed_with_regression_evidence",
-    "final_rereview_round": "pending_separate_request",
+    "final_rereview_round": "completed_with_regression_evidence",
     "independent_product_review": "pending",
     "independent_release_review": "pending",
     "final_media": "deferred_until_reviewed_commit",

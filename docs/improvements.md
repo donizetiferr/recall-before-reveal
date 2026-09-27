@@ -1,5 +1,7 @@
 # Round-two improvements and regression evidence
 
+Historical round-two report. Current candidate status and fresh final checks are in [Round-three product re-review](review.md). Counts and pending-round statements below retain their original scope.
+
 Observed 2026-09-27. This is the separately requested **quality round 2 of 3**, based on critique of commit `06532802c8d31407f963cf314a7937e0e0edfa49`. It is not round-three re-review, independent product review, release approval, or a learning-outcome study. The repository remains private. All fixtures are synthetic; final media is empty.
 
 ## Findings addressed

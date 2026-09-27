@@ -1,6 +1,6 @@
 # Evidence index
 
-Current candidate: see [Round-two improvements and regression evidence](improvements.md). That document records the four critique fixes, current commands/results, and limitations. The first-implementation evidence below is historical; its source hashes, screenshots, test counts, and pending-round statements describe the original commit, not the improved candidate. No screenshot in either evidence set is admitted as final media.
+Current candidate: see [Round-three product re-review](review.md). It records fresh execution of the improved product, a reproduced saved-progress gap and its fix, final regression results, and residual limits. [Round-two improvements](improvements.md) and the first-implementation evidence below are historical: their hashes, counts, screenshots, and pending-round statements describe those versions. No screenshot in any evidence set is admitted as final media.
 
 # Historical first-implementation evidence
 

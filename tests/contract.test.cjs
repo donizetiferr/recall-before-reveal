@@ -42,7 +42,7 @@ module.exports = ({ test, assert }) => {
     for (const file of [...gate.test_files, ...gate.test_support_files, gate.demo_file]) assert.ok(fs.statSync(path.join(root, file)).isFile());
     assert.deepEqual(gate.release.media, []); assert.equal(gate.release.visibility, 'private');
     assert.equal(gate.release.critique_round, 'completed_with_four_findings');
-    assert.match(gate.release.final_rereview_round, /pending/);
+    assert.equal(gate.release.final_rereview_round, 'completed_with_regression_evidence');
     assert.equal(gate.release.independent_product_review, 'pending');
     assert.equal(gate.release.independent_release_review, 'pending');
     assert.match(gate.release.final_media, /deferred/);

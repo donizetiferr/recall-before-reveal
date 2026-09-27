@@ -54,9 +54,13 @@
     });
     if (!Number.isInteger(s.position) || s.position < 0 || s.position > s.cards.length || !Number.isInteger(s.round) || s.round < 1 || s.round > LIMITS.attempts + 1) throw new Error('Invalid practice position.');
     if (!Array.isArray(s.attempts) || s.attempts.length > LIMITS.attempts) throw new Error('Invalid attempt history.');
+    // Progress must be supported by the fixed-order history, not just fit numeric bounds.
+    const expectedAttempts = (s.round - 1) * s.cards.length + s.position + (s.revealedAttemptId === null ? 0 : 1);
+    if (s.attempts.length !== expectedAttempts) throw new Error('Saved progress does not match the attempt history.');
     s.attempts.forEach((a, i) => {
       const card = s.cards.find(c => c.id === a?.cardId);
       if (!a || a.id !== i + 1 || !ids.has(a.cardId) || a.question !== card.question || a.reference !== card.reference) throw new Error('Invalid saved attempt.');
+      if (a.cardId !== s.cards[i % s.cards.length].id || a.round !== Math.floor(i / s.cards.length) + 1) throw new Error('Saved attempt order does not match the question sequence.');
       text(a.answer, 'Attempt', LIMITS.answer); text(a.note, 'Note', LIMITS.note, true);
       if (!CONFIDENCE.includes(a.confidence) || (a.selfCheck !== null && !CHECKS.includes(a.selfCheck))) throw new Error('Invalid self-report.');
       if (!Number.isInteger(a.round) || a.round < 1 || a.round > s.round || typeof a.revealedAt !== 'string' || !Number.isFinite(Date.parse(a.revealedAt))) throw new Error('Invalid attempt metadata.');

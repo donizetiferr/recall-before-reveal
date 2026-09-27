@@ -2,7 +2,7 @@
 
 ## Current boundary
 
-The critique and scoped improvements rounds are complete. Round-three re-review and independent product/release approval remain pending. Keep the repository private. Final media is intentionally empty. Preliminary screenshots belong to test evidence outside the repository and are not approved promotional assets. Current fixes and commands are recorded in `improvements.md`; original first-implementation results are historical.
+All three requested quality rounds are complete; independent final product and release reviews remain pending. Keep the repository private. Final media is intentionally empty. Preliminary screenshots belong to test evidence outside the repository and are not approved promotional assets. Current results and residual limits are recorded in `review.md`; earlier round results are historical.
 
 No model was selected, changed, downloaded, or called for this product. There is no runtime model selection.
 
@@ -23,9 +23,9 @@ The CLI demo uses fixed synthetic reveal times for repeatability. The browser us
 
 ## Separately requested quality rounds
 
-Round 1 is complete with R1-01 through R1-04. Round 2 implemented the scoped fixes and regression evidence in `improvements.md`. The original two-question demonstration and its deterministic JSON bytes are unchanged; creating a new scenario would not add evidence for these fixes.
+Round 1 identified R1-01 through R1-04. Round 2 implemented those fixes. Round 3 freshly exercised them, found and fixed R3-01 (inconsistent saved progress), and repeated the affected journeys. See `review.md`. The original two-question demonstration and its deterministic JSON bytes remain unchanged.
 
-For round 3, recheck confirmed versus unconfirmed deletion, native paste boundary/refusal recovery, saved-practice versus unsaved-editor wording, cancellation and confirmation of native reload, and test-output exit handling. Preserve nonempty attempt logs while exercising errors. Recheck the actual desktop/mobile journey and JSON download. A reopened screenshot or a prior printed PASS does not replace execution of the affected checks. Any further code fix requires fresh source-bound preliminary evidence. The acceptance descriptions below remain the contract for each distinct round, not a claim that round 3 has run.
+Independent product review must still verify deletion uncertainty, native paste refusal/recovery, saved-practice versus unsaved-editor wording, native reload cancellation/confirmation, correct test-output exit handling, and saved-progress consistency. Preserve nonempty attempt logs while exercising errors. Recheck desktop/mobile interaction and the real JSON download. Earlier printed PASS results or reopened screenshots alone do not constitute independent execution. Further code changes require fresh source-bound preliminary evidence. The acceptance descriptions below preserve the distinct round contracts; they do not turn this worker's checks into independent approval.
 
 **Critique.** A separately requested pass should inspect the actual implementation commit and execute the app. Identify material findings with reproducible steps and severity, especially accidental reference exposure, saving/forgetting failures, keyboard focus, narrow-screen usability, and export interpretation. Acceptance: evidence-backed findings and explicit criteria for resolving each material gap. No implementation approval should be inferred merely from the first test run.
 

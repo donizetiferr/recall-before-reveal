@@ -77,6 +77,41 @@ module.exports = ({ test, assert }) => {
     }
     const s = R.recordAttempt(fresh(), 'Answer', 'low', time); s.attempts[0].reference = 'Rewritten'; assert.throws(() => R.validateState(s));
   });
+  test('saved progress must agree with recorded attempts', () => {
+    for (const [key, value] of [['position', 1], ['position', 2], ['round', 2]]) {
+      const state = fresh(); state[key] = value;
+      assert.throws(() => R.validateState(state), /progress/i);
+    }
+    const state = R.recordAttempt(fresh(), 'Answer', 'low', time);
+    state.revealedAttemptId = null;
+    assert.throws(() => R.validateState(state), /progress/i);
+  });
+  test('saved attempt ordering and rounds must match the fixed question order', () => {
+    let state = fresh();
+    for (let i = 0; i < 2; i++) state = R.nextQuestion(R.recordAttempt(state, 'Answer', 'low', time));
+    state = R.recordAttempt(R.practiceAgain(state), 'Again', 'high', time);
+    const wrongCard = structuredClone(state), card = state.cards[1];
+    Object.assign(wrongCard.attempts[0], { cardId: card.id, question: card.question, reference: card.reference });
+    assert.throws(() => R.validateState(wrongCard), /order/i);
+    const wrongRound = structuredClone(state); wrongRound.attempts[0].round = 2;
+    assert.throws(() => R.validateState(wrongRound), /order/i);
+  });
+  test('valid generated states still round-trip at every transition', () => {
+    for (const size of [1, 2, 3, 50]) {
+      let state = R.createSession(Array.from({ length: size }, (_, i) => `Q: Question ${i}?\nA: Reference ${i}.`).join('\n'));
+      const roundtrip = () => assert.deepEqual(R.validateState(JSON.parse(JSON.stringify(state))), state);
+      roundtrip();
+      for (let round = 0; round < 2; round++) {
+        for (let i = 0; i < size; i++) {
+          state.draft = { answer: 'Synthetic draft', confidence: 'medium' }; roundtrip();
+          state = R.recordAttempt(state, 'Synthetic answer', 'medium', time); roundtrip();
+          state = R.reflect(state, 'partial', 'Synthetic note'); roundtrip();
+          state = R.nextQuestion(state); roundtrip();
+        }
+        if (round === 0) { state = R.practiceAgain(state); roundtrip(); }
+      }
+    }
+  });
   test('requires a valid explicit timestamp', () => {
     for (const t of ['', null, 123, 'not a date']) assert.throws(() => R.recordAttempt(fresh(), 'Answer', 'low', t));
   });

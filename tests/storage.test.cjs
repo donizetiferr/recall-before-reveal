@@ -39,6 +39,16 @@ module.exports = ({ test, assert }) => {
   test('failed deletion does not report successful removal', () => {
     assert.equal(S.clear({ removeItem() { throw new Error('Denied'); } }).cleared, false);
   });
+  test('inconsistent saved progress is refused without altering saved bytes', () => {
+    const m = memory(), state = R.createSession('Q: One?\nA: A reference.');
+    state.position = 1;
+    const raw = JSON.stringify({ format: 'recall-local/1', state });
+    m.setItem(S.KEY, raw);
+    const loaded = S.load(m);
+    assert.equal(loaded.state, null); assert.equal(loaded.saved, false);
+    assert.match(loaded.warning, /could not be read/); assert.equal(m.getItem(S.KEY), raw);
+    assert.equal(S.save(m, state).saved, false); assert.equal(m.getItem(S.KEY), raw);
+  });
   test('unavailable storage never produces a deletion receipt', () => {
     const result = S.clear(null);
     assert.equal(result.cleared, false);

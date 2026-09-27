@@ -4,7 +4,7 @@
 
 A small, model-free practice page for people who read AI explanations and want to check what they can actually say without looking. Bring your own question-and-answer pairs, write a response, choose confidence, reveal the reference, and export the record.
 
-Private improvement candidate. The critique and scoped improvements rounds are complete; final re-review, independent product review, and release review are still pending. See `docs/improvements.md` for the four fixes and their regression evidence. No final promotional media has been generated.
+Private review candidate. All three requested quality rounds are complete; independent product review and release review are still pending. See `docs/review.md` for the final re-review, the saved-progress consistency fix, current regression results, and residual limits. Earlier findings and fixes remain in `docs/improvements.md`. No final promotional media has been generated.
 
 ## Use it offline
 
@@ -37,7 +37,7 @@ By default the active set and attempts stay only in the current tab. **Save on t
 
 Turning browser saving off requests removal of this app’s saved key while keeping the tab. **Forget practice** clears the tab only after removal of that key has been confirmed by reading it back as absent. If access, removal, or readback fails, the page reports **removal could not be confirmed**, retains the current tab, and directs you to browser settings. It never claims that inaccessible data was deleted. These controls do not remove other applications’ data or downloaded exports, and do not promise secure erasure.
 
-Local storage is not encrypted, is tied to the browser and origin, and may be blocked, evicted, or cleared. Local-file storage behavior also varies by browser. A save failure is reported; it does not erase the current practice or pretend the old saved copy is current. Corrupt saved data is not automatically replaced. Export regularly. Use a single tab for a saved set: concurrent-tab conflict resolution and cross-device sync are not implemented.
+Local storage is not encrypted, is tied to the browser and origin, and may be blocked, evicted, or cleared. Local-file storage behavior also varies by browser. A save failure is reported; it does not erase the current practice or pretend the old saved copy is current. Saved position, round, and attempt order must agree with the recorded history. Inconsistent or corrupt saved data is not loaded, silently repaired, or automatically replaced. Export regularly. Use a single tab for a saved set: concurrent-tab conflict resolution and cross-device sync are not implemented.
 
 The export is `recall-attempts.json`, a readable `recall-before-reveal/1` document. It contains the title, question set, each locked answer and confidence, reference snapshot, optional self-check and note, round number, and reveal timestamp. The latest 20 attempts are expandable in the UI; export contains all attempts. Exports are not imported back into the app in this version. A download request is not confirmation that the browser saved the file: check your downloads.
 
