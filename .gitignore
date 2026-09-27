@@ -1,0 +1,16 @@
+# Defense in depth only: working tree AND complete history must still be scanned.
+node_modules/
+.env
+.env.*
+*.pem
+*.key
+*.log
+*.png
+*.mp4
+*.webm
+*.zip
+.DS_Store
+coverage/
+.cache/
+artifacts/
+recall-attempts.json

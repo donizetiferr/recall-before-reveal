@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="A quiet, model-free space to try an answer before seeing the reference. Practice locally and export your attempts.">
+  <title>Recall Before Reveal — practice, not prediction</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="core.js"></script>
+  <script defer src="storage.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to practice</a>
+  <header class="site-header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">r<span>↗</span></span><div>Recall Before Reveal<small>Practice, not prediction.</small></div></div>
+    <span class="offline-badge"><span aria-hidden="true">●</span> Offline · no model</span>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="intro-title">
+      <p class="eyebrow">A small pause between reading and knowing</p>
+      <h1 id="intro-title">Try the answer.<br><span>Then take a look.</span></h1>
+      <p class="lede">An explanation can feel familiar. What can you say without it?<br class="desktop-break"> Bring your own questions, make an attempt, and compare for yourself.</p>
+    </section>
+    <noscript><p class="notice">JavaScript is needed for local practice and JSON export. No data is sent anywhere.</p></noscript>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <div class="workspace" id="workspace" tabindex="-1">
+      <aside class="set-panel" aria-labelledby="set-heading">
+        <div class="panel-heading"><span class="step-dot">01</span><h2 id="set-heading">Your question set</h2></div>
+        <form id="set-form" novalidate>
+          <label for="set-title">Give it a name <span class="optional">(optional)</span></label>
+          <input id="set-title" maxlength="80" placeholder="e.g. Clearer AI prompts" autocomplete="off">
+          <label for="pairs">Paste your Q: and A: pairs</label>
+          <p class="hint" id="pairs-help">Start each question with <b>Q:</b> and its reference with <b>A:</b>. Put each label on a new line. Up to 50 pairs; multiline text is welcome.</p>
+          <textarea id="pairs" rows="9" maxlength="100000" spellcheck="false" aria-describedby="pairs-help set-error" placeholder="Q: What makes a useful request?&#10;A: A clear task, relevant context, and a useful output format.&#10;&#10;Q: How could I check the answer?&#10;A: Compare important claims with a reliable source."></textarea>
+          <p class="error" id="set-error" role="alert" hidden></p>
+          <button class="primary full" type="submit">Start practicing <span aria-hidden="true">→</span></button>
+          <button class="secondary full" id="example" type="button">Try a 2-question example</button>
+          <button class="text-button full" id="cancel-edit" type="button" hidden>Back to current practice</button>
+          <p class="hint small-print">References are yours to check. This tool does not generate questions or verify answers.</p>
+        </form>
+        <div id="set-loaded" hidden>
+          <h3 id="loaded-title"></h3>
+          <p id="loaded-count" class="muted"></p>
+          <p class="hint">Your references stay covered until you record an answer and your confidence.</p>
+          <button class="secondary full" id="replace-set" type="button">Replace question set</button>
+        </div>
+        <div class="privacy-box">
+          <label class="check-label"><input type="checkbox" id="remember"><span>Save on this browser</span></label>
+          <p id="storage-status" class="hint">Tab only. Export before closing.</p>
+          <p class="hint">Local saving is not encrypted. Avoid sensitive information on a shared device.</p>
+          <button class="text-button" id="forget" type="button">Forget practice</button>
+        </div>
+      </aside>
+      <section class="practice-panel" aria-labelledby="practice-heading">
+        <div class="panel-heading"><span class="step-dot">02</span><h2 id="practice-heading">Recall before reveal</h2><span id="progress-label" class="progress-label"></span></div>
+        <div id="empty-state" class="empty-state">
+          <div class="card-symbol" aria-hidden="true"><span>Q</span><span>?</span></div>
+          <h3>A little space to think.</h3>
+          <p>Add a question set, or try the example.<br>Your first question will appear here.</p>
+          <ol class="steps"><li><b>Recall</b><span>Write in your own words.</span></li><li><b>Commit</b><span>Choose your confidence.</span></li><li><b>Compare</b><span>Reveal, reflect, keep a record.</span></li></ol>
+          <p class="hint">No timer. No score. No AI judging you.</p>
+        </div>
+        <div id="question-view" hidden>
+          <progress id="progress" value="0" max="1" aria-label="Questions completed"></progress>
+          <p class="eyebrow question-kicker">The question</p>
+          <h3 id="question" class="question" tabindex="-1"></h3>
+          <form id="attempt-form" novalidate>
+            <label for="answer">Your answer, from memory</label>
+            <p class="hint" id="answer-help">A rough attempt is enough. “I don’t know yet” counts, too.</p>
+            <textarea id="answer" rows="5" maxlength="4000" aria-describedby="answer-help attempt-error" placeholder="Put the explanation aside. What do you remember?"></textarea>
+            <fieldset id="confidence-field"><legend>Before you look, how confident are you?</legend><div class="confidence-options">
+              <label><input type="radio" name="confidence" value="low"><span>Low<small>Mostly guessing</small></span></label>
+              <label><input type="radio" name="confidence" value="medium"><span>Medium<small>Some gaps</small></span></label>
+              <label><input type="radio" name="confidence" value="high"><span>High<small>Pretty sure</small></span></label>
+            </div></fieldset>
+            <p class="error" id="attempt-error" role="alert" hidden></p>
+            <div class="reveal-action"><button class="primary" id="reveal" type="submit">Record &amp; reveal <span aria-hidden="true">↗</span></button><span class="hint">Your answer and confidence<br>are locked when you reveal.</span></div>
+          </form>
+          <section id="comparison" class="comparison" hidden aria-labelledby="reference-heading">
+            <p id="recorded-meta" class="recorded-meta"></p>
+            <h4 id="reference-heading" tabindex="-1">Your reference answer</h4>
+            <p id="reference" class="reference-text"></p>
+            <p class="hint">Compare the ideas, not just the wording. The reference may be incomplete or wrong.</p>
+            <fieldset><legend>Your self-check <span class="optional">(optional)</span></legend><div class="self-checks">
+              <label><input type="radio" name="self-check" value="matched"><span>Got the main idea</span></label>
+              <label><input type="radio" name="self-check" value="partial"><span>Missed something</span></label>
+              <label><input type="radio" name="self-check" value="missed"><span>Need another look</span></label>
+            </div></fieldset>
+            <label for="note">One thing to remember <span class="optional">(optional)</span></label>
+            <textarea id="note" rows="2" maxlength="1000" placeholder="What would you add or change next time?"></textarea>
+            <button class="primary" id="next" type="button">Next question →</button>
+          </section>
+        </div>
+        <section id="complete" class="complete" hidden aria-labelledby="complete-heading">
+          <span class="complete-mark" aria-hidden="true">✓</span><p class="eyebrow">Round complete</p>
+          <h3 id="complete-heading" tabindex="-1">Now you have something to compare.</h3>
+          <p id="completion-text"></p><p class="hint">These are your observations, not a measure of mastery. Export the record, then try again another day.</p>
+          <div id="review-list" class="review-list"></div>
+          <button class="primary" id="again" type="button">Practice this set again</button>
+        </section>
+      </section>
+    </div>
+    <section class="history-section" aria-labelledby="history-heading">
+      <div class="history-top"><div><p class="eyebrow">Take the evidence with you</p><h2 id="history-heading">Your attempt log <span id="attempt-count">0</span></h2></div><button id="export" class="secondary" type="button" disabled>Export attempts · JSON <span aria-hidden="true">↓</span></button></div>
+      <p id="history-empty" class="muted">Nothing recorded yet. Revealing an answer creates your first entry.</p>
+      <p id="history-help" class="hint">Exports contain your questions, reference answers, attempts, confidence, self-checks, notes, and reveal times. Keep the file private when needed.</p>
+      <div id="history"></div>
+    </section>
+  </main>
+  <footer><span>Think first. Look second.</span><p>No account, tracking, remote scripts, or model calls. All practice stays in this tab or your browser’s local storage.</p></footer>
+</body>
+</html>

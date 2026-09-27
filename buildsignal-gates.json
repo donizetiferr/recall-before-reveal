@@ -1,0 +1,30 @@
+{
+  "schema": "buildsignal-gates/1",
+  "product": "Recall Before Reveal",
+  "test_files": ["tests/run.cjs"],
+  "test_support_files": ["tests/core.test.cjs", "tests/storage.test.cjs", "tests/contract.test.cjs"],
+  "demo_file": "demo/run.cjs",
+  "test_argv": ["node", "tests/run.cjs"],
+  "demo_argv": ["node", "demo/run.cjs"],
+  "runtime": { "node": ">=22", "runtime_dependencies": 0, "network_required": false, "child_processes_in_tests": false },
+  "entrypoint": "index.html",
+  "acceptance": [
+    "The app opens from local files without fetching remote resources.",
+    "A nonblank answer and explicit confidence are required before reveal.",
+    "Reveal records an immutable answer and confidence snapshot; self-checks remain user-reported.",
+    "JSON export preserves references, answers, confidence, self-checks, notes, rounds, and reveal times.",
+    "Desktop, narrow mobile, keyboard, empty, malformed-input, and storage-failure paths are exercised.",
+    "Tests and demo run deterministically without network or child processes."
+  ],
+  "release": {
+    "visibility": "private",
+    "implementation": "candidate",
+    "critique_round": "pending_separate_request",
+    "improvements_round": "pending_separate_request",
+    "final_rereview_round": "pending_separate_request",
+    "independent_product_review": "pending",
+    "independent_release_review": "pending",
+    "final_media": "deferred_until_reviewed_commit",
+    "media": []
+  }
+}
