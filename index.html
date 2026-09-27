@@ -32,8 +32,8 @@
           <label for="set-title">Give it a name <span class="optional">(optional)</span></label>
           <input id="set-title" maxlength="80" placeholder="e.g. Clearer AI prompts" autocomplete="off">
           <label for="pairs">Paste your Q: and A: pairs</label>
-          <p class="hint" id="pairs-help">Start each question with <b>Q:</b> and its reference with <b>A:</b>. Put each label on a new line. Up to 50 pairs; multiline text is welcome.</p>
-          <textarea id="pairs" rows="9" maxlength="100000" spellcheck="false" aria-describedby="pairs-help set-error" placeholder="Q: What makes a useful request?&#10;A: A clear task, relevant context, and a useful output format.&#10;&#10;Q: How could I check the answer?&#10;A: Compare important claims with a reliable source."></textarea>
+          <p class="hint" id="pairs-help">Start each question with <b>Q:</b> and its reference with <b>A:</b>. Put each label on a new line. Up to 50 pairs and 100,000 total characters; multiline text is welcome. Oversized pastes are refused, not shortened.</p>
+          <textarea id="pairs" rows="9" spellcheck="false" aria-describedby="pairs-help set-error" placeholder="Q: What makes a useful request?&#10;A: A clear task, relevant context, and a useful output format.&#10;&#10;Q: How could I check the answer?&#10;A: Compare important claims with a reliable source."></textarea>
           <p class="error" id="set-error" role="alert" hidden></p>
           <button class="primary full" type="submit">Start practicing <span aria-hidden="true">→</span></button>
           <button class="secondary full" id="example" type="button">Try a 2-question example</button>
@@ -46,6 +46,7 @@
           <p class="hint">Your references stay covered until you record an answer and your confidence.</p>
           <button class="secondary full" id="replace-set" type="button">Replace question set</button>
         </div>
+        <p id="editor-status" class="hint" role="status" hidden></p>
         <div class="privacy-box">
           <label class="check-label"><input type="checkbox" id="remember"><span>Save on this browser</span></label>
           <p id="storage-status" class="hint">Tab only. Export before closing.</p>

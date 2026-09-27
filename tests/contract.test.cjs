@@ -36,12 +36,16 @@ module.exports = ({ test, assert }) => {
       assert.ok(app.includes(`$('${id}').addEventListener('click'`), `No behavior: ${id}`);
     }
   });
-  test('gate points to runnable test and demo and keeps all release reviews pending', () => {
+  test('gate points to runnable tests and demo and keeps independent release gates pending', () => {
     const gate = JSON.parse(read('buildsignal-gates.json'));
     assert.deepEqual(gate.test_files, ['tests/run.cjs']); assert.equal(gate.demo_file, 'demo/run.cjs');
     for (const file of [...gate.test_files, ...gate.test_support_files, gate.demo_file]) assert.ok(fs.statSync(path.join(root, file)).isFile());
     assert.deepEqual(gate.release.media, []); assert.equal(gate.release.visibility, 'private');
-    assert.match(gate.release.critique_round, /pending/); assert.match(gate.release.final_media, /deferred/);
+    assert.equal(gate.release.critique_round, 'completed_with_four_findings');
+    assert.match(gate.release.final_rereview_round, /pending/);
+    assert.equal(gate.release.independent_product_review, 'pending');
+    assert.equal(gate.release.independent_release_review, 'pending');
+    assert.match(gate.release.final_media, /deferred/);
   });
   test('demo is deterministic and produces two honest self-reported records', () => {
     const { runDemo, PAIRS } = require('../demo/run.cjs');

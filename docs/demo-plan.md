@@ -2,7 +2,7 @@
 
 ## Current boundary
 
-This is the first implementation, not the additional quality rounds or an independent product/release approval. Keep the repository private. Final media is intentionally empty. Preliminary screenshots belong to test evidence outside the repository and are not approved promotional assets.
+The critique and scoped improvements rounds are complete. Round-three re-review and independent product/release approval remain pending. Keep the repository private. Final media is intentionally empty. Preliminary screenshots belong to test evidence outside the repository and are not approved promotional assets. Current fixes and commands are recorded in `improvements.md`; original first-implementation results are historical.
 
 No model was selected, changed, downloaded, or called for this product. There is no runtime model selection.
 
@@ -22,6 +22,10 @@ The outcome is a real, readable attempt record that preserves what someone said 
 The CLI demo uses fixed synthetic reveal times for repeatability. The browser uses the actual local clock. Do not present the scripted self-checks as user-study evidence or call the output a correctness score.
 
 ## Separately requested quality rounds
+
+Round 1 is complete with R1-01 through R1-04. Round 2 implemented the scoped fixes and regression evidence in `improvements.md`. The original two-question demonstration and its deterministic JSON bytes are unchanged; creating a new scenario would not add evidence for these fixes.
+
+For round 3, recheck confirmed versus unconfirmed deletion, native paste boundary/refusal recovery, saved-practice versus unsaved-editor wording, cancellation and confirmation of native reload, and test-output exit handling. Preserve nonempty attempt logs while exercising errors. Recheck the actual desktop/mobile journey and JSON download. A reopened screenshot or a prior printed PASS does not replace execution of the affected checks. Any further code fix requires fresh source-bound preliminary evidence. The acceptance descriptions below remain the contract for each distinct round, not a claim that round 3 has run.
 
 **Critique.** A separately requested pass should inspect the actual implementation commit and execute the app. Identify material findings with reproducible steps and severity, especially accidental reference exposure, saving/forgetting failures, keyboard focus, narrow-screen usability, and export interpretation. Acceptance: evidence-backed findings and explicit criteria for resolving each material gap. No implementation approval should be inferred merely from the first test run.
 

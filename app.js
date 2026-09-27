@@ -12,8 +12,14 @@
   $('remember').checked = remember;
   function notice(message) { $('notice').textContent = message; $('notice').hidden = !message; }
   function error(id, message, control) { $(id).textContent = message; $(id).hidden = !message; if (control) { $(control).setAttribute('aria-invalid', message ? 'true' : 'false'); if (message) $(control).focus(); } }
+  let rejectedPaste = '';
+  function editorHasDraft() { return $('pairs').value.length > 0 || $('set-title').value.length > 0; }
   function status() {
-    $('storage-status').textContent = remember ? (saved ? 'Saved locally, including your current draft. No account or sync.' : 'Not saved yet. Keep this tab open or export.') : 'Tab only. Export before closing.';
+    $('storage-status').textContent = remember ? (saved ? 'Active practice saved locally, including your answer draft. No account or sync.' : 'Active practice not saved yet. Keep this tab open or export.') : 'Practice is tab-only. Export attempts before closing.';
+    $('editor-status').hidden = !editorHasDraft();
+    $('editor-status').textContent = editing
+      ? 'Question-set editor: not saved. Copy this text before leaving. Starting practice applies it; browser saving only saves the active practice.'
+      : 'Question-set editor: not saved. Your text is still in this tab. Choose Replace question set to return, and copy it before leaving.';
   }
   function persist() {
     clearTimeout(saveTimer);
@@ -89,7 +95,28 @@
     }
     status(); history();
   }
+  function editorChanged() {
+    rejectedPaste = '';
+    const tooLong = $('pairs').value.length > R.LIMITS.input;
+    error('set-error', tooLong ? 'Question set is too long. Use at most 100,000 total characters. Nothing has been applied or shortened.' : '');
+    $('pairs').setAttribute('aria-invalid', String(tooLong));
+    status();
+  }
+  $('set-title').addEventListener('input', status);
+  $('pairs').addEventListener('input', editorChanged);
+  $('pairs').addEventListener('paste', e => {
+    if (!e.clipboardData) return; // The full input is still validated without native maxlength.
+    const inserted = e.clipboardData.getData('text/plain').replace(/\r\n?/g, '\n');
+    const field = $('pairs');
+    const length = field.value.length - (field.selectionEnd - field.selectionStart) + inserted.length;
+    if (length > R.LIMITS.input) {
+      e.preventDefault();
+      rejectedPaste = 'Paste not inserted: it would exceed 100,000 total characters. Your previous editor text is unchanged. Shorten the paste or edit the text before starting.';
+      error('set-error', rejectedPaste, 'pairs');
+    }
+  });
   function start() {
+    if (rejectedPaste) { error('set-error', rejectedPaste, 'pairs'); return; }
     let candidate;
     try { candidate = R.createSession($('pairs').value, $('set-title').value); }
     catch (e) { error('set-error', e.message, 'pairs'); return; }
@@ -100,9 +127,9 @@
   }
   $('set-form').addEventListener('submit', e => { e.preventDefault(); start(); });
   $('example').addEventListener('click', () => {
-    if ($('pairs').value.trim() && !window.confirm('Replace the text in the editor with the example? Your active practice is unchanged until you start.')) return;
+    if (editorHasDraft() && !window.confirm('Replace the title and text in the editor with the example? Your active practice is unchanged until you start.')) return;
     $('set-title').value = 'Everyday AI · example'; $('pairs').value = EXAMPLE;
-    error('set-error', '', 'pairs'); focus('pairs');
+    editorChanged(); error('set-error', '', 'pairs'); focus('pairs');
     notice('Example loaded. These are synthetic practice questions, not your personal results. Select Start practicing.');
   });
   $('replace-set').addEventListener('click', () => { editing = true; render(); focus('set-title'); });
@@ -147,9 +174,9 @@
   });
   $('forget').addEventListener('click', () => {
     if (!window.confirm('Forget this practice, its draft, and its saved browser copy? Export attempts first to keep them.')) return;
-    const result = storage ? S.clear(storage) : { cleared: true };
+    const result = S.clear(storage);
     if (!result.cleared) { notice(result.warning); return; }
-    clearTimeout(saveTimer); state = null; remember = false; saved = false; editing = true;
+    clearTimeout(saveTimer); state = null; remember = false; saved = false; editing = true; rejectedPaste = '';
     $('remember').checked = false; $('pairs').value = ''; $('set-title').value = ''; $('reference').textContent = ''; $('answer').value = ''; $('note').value = ''; $('review-list').replaceChildren();
     error('set-error', '', 'pairs'); error('attempt-error', '', 'answer'); render(); notice('Practice removed from this tab and its saved browser copy. Downloaded exports are not deleted.'); focus('pairs');
   });
@@ -167,7 +194,8 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden) persist(); });
   window.addEventListener('beforeunload', e => {
     persist();
-    if (state && !saved && (state.attempts.length || state.draft.answer)) { e.preventDefault(); e.returnValue = ''; }
+    // Editor text is intentionally tab-only, even when the active practice is saved.
+    if (editorHasDraft() || (state && !saved)) { e.preventDefault(); e.returnValue = ''; }
   });
   render();
   if (restored.warning) notice(storage ? restored.warning : 'Browser storage is unavailable. Tab-only practice and JSON export still work.');

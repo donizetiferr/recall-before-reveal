@@ -4,7 +4,7 @@
 
 A small, model-free practice page for people who read AI explanations and want to check what they can actually say without looking. Bring your own question-and-answer pairs, write a response, choose confidence, reveal the reference, and export the record.
 
-Implementation candidate only. The repository remains private. Additional critique, improvements, final re-review, independent product review, and release review are separate pending gates. No final promotional media has been generated.
+Private improvement candidate. The critique and scoped improvements rounds are complete; final re-review, independent product review, and release review are still pending. See `docs/improvements.md` for the four fixes and their regression evidence. No final promotional media has been generated.
 
 ## Use it offline
 
@@ -29,11 +29,13 @@ A: Check important claims against a reliable source. A confident explanation is 
 
 Use uppercase `Q:` and `A:` at the start of separate lines. Text may span multiple lines and include blank lines. A line starting with either marker is structural; do not use an unescaped leading marker as ordinary reference text. Leading spaces before markers are not accepted as new markers. Plain text is displayed literally, including HTML-like text. There is no Markdown interpreter.
 
-Limits: 50 pairs, 100,000 input characters, 1,000 characters per question, 4,000 per reference or attempt, 1,000 per note, and 500 attempts per set. A malformed import is refused without replacing your active practice. Replacement and forgetting require confirmation. Export first to preserve attempts before replacing a set.
+Limits: 50 pairs, 100,000 input characters, 1,000 characters per question, 4,000 per reference or attempt, 1,000 per note, and 500 attempts per set. Counts use JavaScript string length (UTF-16 code units). An oversized paste is refused without shortening it or replacing the previous editor text. Edit the text or paste a smaller set to recover. If a browser insertion bypasses the paste handler, the full oversized buffer remains visible but cannot start practice. Individual question/reference limits still apply. A malformed import is refused without replacing your active practice. Replacement and forgetting require confirmation. Export first to preserve attempts before replacing a set.
 
 ## Your data
 
-By default the set and attempts stay only in the current tab. **Save on this browser** explicitly enables local storage, including the current answer draft. Turning it off deletes this app’s saved copy but keeps the current tab. **Forget practice** clears this app’s in-memory practice and its local-storage key, never other applications’ data or previously downloaded files.
+By default the active set and attempts stay only in the current tab. **Save on this browser** enables local storage for the active practice, including its current answer draft. It does **not** save unstarted text in the question-set editor. That editor has a separate **not saved** message. **Back to current practice** hides the editor without deleting its text; open **Replace question set** to return. Copy unstarted editor text before leaving. Reloading or leaving with unsaved work requests a browser confirmation; choosing to leave discards tab-only data. Browsers can suppress that prompt, so it is a safety net, not a backup (see the browser reference in `docs/improvements.md`).
+
+Turning browser saving off requests removal of this app’s saved key while keeping the tab. **Forget practice** clears the tab only after removal of that key has been confirmed by reading it back as absent. If access, removal, or readback fails, the page reports **removal could not be confirmed**, retains the current tab, and directs you to browser settings. It never claims that inaccessible data was deleted. These controls do not remove other applications’ data or downloaded exports, and do not promise secure erasure.
 
 Local storage is not encrypted, is tied to the browser and origin, and may be blocked, evicted, or cleared. Local-file storage behavior also varies by browser. A save failure is reported; it does not erase the current practice or pretend the old saved copy is current. Corrupt saved data is not automatically replaced. Export regularly. Use a single tab for a saved set: concurrent-tab conflict resolution and cross-device sync are not implemented.
 
@@ -54,7 +56,7 @@ node tests/run.cjs
 node demo/run.cjs
 ```
 
-The test runner loads assertion suites in one process and blocks network and child-process APIs. It does not use `node --test` process isolation, download packages, start browsers, or write test output files. Node’s additional permission guard was also exercised on the observed Node 24 runtime:
+The test runner loads assertion suites in one process and blocks network, worker, and child-process APIs. It initializes standard output/error before installing those guards and reports output failures separately from assertion failures. It does not use `node --test` process isolation, download packages, start browsers, or write test output files; it writes results to standard output/error. The guards cover these trusted tests, not arbitrary hostile code. Node’s additional permission guard was also exercised on the observed Node 24 runtime:
 
 ```sh
 node --permission --allow-fs-read=. tests/run.cjs

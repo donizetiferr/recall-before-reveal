@@ -39,4 +39,22 @@ module.exports = ({ test, assert }) => {
   test('failed deletion does not report successful removal', () => {
     assert.equal(S.clear({ removeItem() { throw new Error('Denied'); } }).cleared, false);
   });
+  test('unavailable storage never produces a deletion receipt', () => {
+    const result = S.clear(null);
+    assert.equal(result.cleared, false);
+    assert.match(result.warning, /could not be confirmed/);
+    assert.match(result.warning, /tab has not been discarded/);
+  });
+  test('silent no-op removal is caught by readback without touching other keys', () => {
+    const m = memory(); m.setItem(S.KEY, 'synthetic saved copy'); m.setItem('unrelated', 'keep');
+    m.removeItem = () => {};
+    assert.equal(S.clear(m).cleared, false);
+    assert.equal(m.getItem(S.KEY), 'synthetic saved copy'); assert.equal(m.getItem('unrelated'), 'keep');
+  });
+  test('removal followed by unreadable storage remains unconfirmed', () => {
+    let removed = false;
+    const result = S.clear({ removeItem() { removed = true; }, getItem() { throw new Error('Denied'); } });
+    assert.equal(removed, true); assert.equal(result.cleared, false);
+    assert.match(result.warning, /could not be confirmed/);
+  });
 };

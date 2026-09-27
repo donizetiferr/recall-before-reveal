@@ -21,8 +21,14 @@
     catch { return { saved: false, warning: 'Browser saving failed. Your practice is still here in this tab. Export attempts before closing.' }; }
   }
   function clear(storage) {
-    try { storage.removeItem(KEY); return { cleared: true, warning: '' }; }
-    catch { return { cleared: false, warning: 'Browser data could not be removed. Clear this site’s data in browser settings; this tab has not been discarded.' }; }
+    try {
+      storage.removeItem(KEY);
+      // A request to remove data is not confirmation that it is absent.
+      if (storage.getItem(KEY) !== null) throw new Error('Saved copy is still present.');
+      return { cleared: true, warning: '' };
+    } catch {
+      return { cleared: false, warning: 'Removal of the saved browser copy could not be confirmed. This tab has not been discarded. Clear this site’s data in browser settings; downloaded exports are separate.' };
+    }
   }
   return Object.freeze({ KEY, load, save, clear });
 });
