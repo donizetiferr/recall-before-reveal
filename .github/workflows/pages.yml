@@ -1,0 +1,57 @@
+name: Deploy reviewed static product
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Public repository security]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: >-
+      !github.event.repository.private &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'))
+    runs-on: [self-hosted, netcup-vps]
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          persist-credentials: false
+      - name: Build explicit static artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir _site
+          cp index.html styles.css core.js storage.js app.js LICENSE _site/
+          if [ -d media ]; then cp -R media _site/media; fi
+          touch _site/.nojekyll
+      - name: Scan exact Pages artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --output "$RUNNER_TEMP/gitleaks.tar.gz" https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          printf '[extend]\nuseDefault = true\n' > "$RUNNER_TEMP/pages-gitleaks.toml"
+          "$RUNNER_TEMP/gitleaks" dir _site --config "$RUNNER_TEMP/pages-gitleaks.toml" --gitleaks-ignore-path "$RUNNER_TEMP/empty-ignore" --ignore-gitleaks-allow --redact=100 --no-banner --no-color 2>"$RUNNER_TEMP/pages-scan.log"
+          if grep -Eiq '\b(ERR|WRN|error|warning)\b' "$RUNNER_TEMP/pages-scan.log"; then
+            echo 'Artifact scan incomplete; inspect privately.'
+            exit 1
+          fi
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e

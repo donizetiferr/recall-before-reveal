@@ -14,3 +14,6 @@ coverage/
 .cache/
 artifacts/
 recall-attempts.json
+
+# Independently reviewed public demo
+!media/recall-before-reveal.mp4

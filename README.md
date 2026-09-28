@@ -4,7 +4,9 @@
 
 A small, model-free practice page for people who read AI explanations and want to check what they can actually say without looking. Bring your own question-and-answer pairs, write a response, choose confidence, reveal the reference, and export the record.
 
-Private review candidate. All three requested quality rounds are complete; independent product review and release review are still pending. See `docs/review.md` for the final re-review, the saved-progress consistency fix, current regression results, and residual limits. Earlier findings and fixes remain in `docs/improvements.md`. No final promotional media has been generated.
+**[Open Recall Before Reveal](https://donizetiferr.github.io/recall-before-reveal/)** · [Watch the 7.5-second demo](media/recall-before-reveal.mp4)
+
+The demo shows real application screens using synthetic examples. Captions are in English. It illustrates the workflow, not a learning-outcome benchmark. Independent review covered desktop and mobile layouts, keyboard navigation, import errors, saved progress, and JSON export. See [release validation](docs/release-validation.md) for commands and limits.
 
 ## Use it offline
 
